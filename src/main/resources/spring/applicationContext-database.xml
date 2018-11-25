@@ -65,8 +65,8 @@
 	<bean id="druid-stat-pointcut" class="org.springframework.aop.support.JdkRegexpMethodPointcut" scope="prototype">
 	    <property name="patterns">
 	        <list>
-	            <value>com.example.demo.service.*</value>
-	            <value>com.example.demo.mapper.*</value>
+	            <value>com.itcast.oa.service.*</value>
+	            <value>com.itcast.oa.mapper.*</value>
 	        </list>
 	    </property>
 	</bean>
@@ -85,7 +85,7 @@
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource" />
 		<property name="configLocation" value="classpath:/spring/mybatis-config.xml"></property>  
-		<property name="mapperLocations" value="classpath:com/example/demo/mapper/**/*Mapper.xml"/>
+		<property name="mapperLocations" value="classpath:com/itcast/oa/dao/**/*Mapper.xml"/>
     </bean>
 
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">

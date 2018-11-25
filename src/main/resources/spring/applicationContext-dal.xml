@@ -17,7 +17,7 @@
     <!-- 注册Mapper,可在StratApplication中注解设置或如下配置： -->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
     	<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
-        <property name="basePackage" value="com.example.demo.mapper" />
+        <property name="basePackage" value="com.itcast.oa.mapper" />
     </bean>
 
 </beans>
