@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+
+<mapper namespace="com.itcast.oa.dao.ForumMapper">
+
+	<resultMap id="ForumResultMap" type="com.itcast.oa.entity.Forum">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <result property="position" column="position" jdbcType="VARCHAR"/>
+        <result property="topicCount" column="topicCount" jdbcType="INTEGER"/>
+        <result property="articleCount" column="articleCount" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">	   
+		id, name, description, position, topicCount, articleCount
+	</sql>
+
+	<insert id="insert" parameterType="com.itcast.oa.entity.Forum">
+        INSERT INTO forum (
+        	id ,
+        	name ,
+        	description ,
+        	position ,
+        	topicCount ,
+        	articleCount 
+        ) VALUES (
+        	#{id, jdbcType=INTEGER} ,
+        	#{name, jdbcType=VARCHAR} ,
+        	#{description, jdbcType=VARCHAR} ,
+        	#{position, jdbcType=VARCHAR} ,
+        	#{topicCount, jdbcType=INTEGER} ,
+        	#{articleCount, jdbcType=INTEGER} 
+        )	
+	</insert>
+
+	<insert id="insertIfNotnull"   parameterType="com.itcast.oa.entity.Forum">
+        INSERT INTO forum 
+		<trim prefix="(" suffix=")" suffixOverrides="," >
+			<if test="id != null">
+        		id ,
+			</if>
+			<if test="name != null">
+        		name ,
+			</if>
+			<if test="description != null">
+        		description ,
+			</if>
+			<if test="position != null">
+        		position ,
+			</if>
+			<if test="topicCount != null">
+        		topicCount ,
+			</if>
+			<if test="articleCount != null">
+        		articleCount ,
+			</if>
+		</trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+			<if test="id != null">
+        		#{id, jdbcType=INTEGER} ,
+			</if>
+			<if test="name != null">
+        		#{name, jdbcType=VARCHAR} ,
+			</if>
+			<if test="description != null">
+        		#{description, jdbcType=VARCHAR} ,
+			</if>
+			<if test="position != null">
+        		#{position, jdbcType=VARCHAR} ,
+			</if>
+			<if test="topicCount != null">
+        		#{topicCount, jdbcType=INTEGER} ,
+			</if>
+			<if test="articleCount != null">
+        		#{articleCount, jdbcType=INTEGER} ,
+			</if>
+		</trim>
+	</insert>
+    
+	<update id="update"  parameterType="com.itcast.oa.entity.Forum" >   
+        UPDATE forum SET
+	        name = #{name, jdbcType=VARCHAR} ,
+	        description = #{description, jdbcType=VARCHAR} ,
+	        position = #{position, jdbcType=VARCHAR} ,
+	        topicCount = #{topicCount, jdbcType=INTEGER} ,
+	        articleCount = #{articleCount, jdbcType=INTEGER} 
+        WHERE 
+	        id = #{id, jdbcType=INTEGER} 
+	</update>
+
+	<update id="updateIfNotnull"  parameterType="com.itcast.oa.entity.Forum">    
+        UPDATE forum 
+			<set>
+				<if test="name != null">
+					name = #{name, jdbcType=VARCHAR} ,
+				</if>
+				<if test="description != null">
+					description = #{description, jdbcType=VARCHAR} ,
+				</if>
+				<if test="position != null">
+					position = #{position, jdbcType=VARCHAR} ,
+				</if>
+				<if test="topicCount != null">
+					topicCount = #{topicCount, jdbcType=INTEGER} ,
+				</if>
+				<if test="articleCount != null">
+					articleCount = #{articleCount, jdbcType=INTEGER} ,
+				</if>
+			</set>
+        WHERE 
+	        id = #{id, jdbcType=INTEGER} 
+	</update>
+
+    <delete id="deleteById">  
+        DELETE FROM forum WHERE
+        id = #{id } 
+    </delete>
+    
+		<select id="selectById" resultMap="ForumResultMap">
+			SELECT <include refid="columns" />		   
+			FROM forum 
+			WHERE 
+			id = #{id, jdbcType=INTEGER} 
+		</select>
+	
+	<sql id="selectList_where">
+		<where>	      				
+	       <if test="entity.id != null &amp;&amp; entity.id != ''">
+		 		 		AND id = #{entity.id, jdbcType=INTEGER}
+			</if>
+	       <if test="entity.name != null &amp;&amp; entity.name != ''">
+		 	   <choose>
+		 	   	  <when test="@Ognl@startWith(entity.name,'like')">
+		 	   	  	   AND name ${entity.name }
+		 	   	  </when>
+		 	   	  <otherwise>
+		 	   	  	   AND name = #{entity.name, jdbcType=VARCHAR}
+		 	   	  </otherwise>
+		 	   </choose>
+			</if>
+	       <if test="entity.description != null &amp;&amp; entity.description != ''">
+		 	   <choose>
+		 	   	  <when test="@Ognl@startWith(entity.description,'like')">
+		 	   	  	   AND description ${entity.description }
+		 	   	  </when>
+		 	   	  <otherwise>
+		 	   	  	   AND description = #{entity.description, jdbcType=VARCHAR}
+		 	   	  </otherwise>
+		 	   </choose>
+			</if>
+	       <if test="entity.position != null &amp;&amp; entity.position != ''">
+		 	   <choose>
+		 	   	  <when test="@Ognl@startWith(entity.position,'like')">
+		 	   	  	   AND position ${entity.position }
+		 	   	  </when>
+		 	   	  <otherwise>
+		 	   	  	   AND position = #{entity.position, jdbcType=VARCHAR}
+		 	   	  </otherwise>
+		 	   </choose>
+			</if>
+	       <if test="entity.topicCount != null &amp;&amp; entity.topicCount != ''">
+		 		 		AND topicCount = #{entity.topicCount, jdbcType=INTEGER}
+			</if>
+	       <if test="entity.articleCount != null &amp;&amp; entity.articleCount != ''">
+		 		 		AND articleCount = #{entity.articleCount, jdbcType=INTEGER}
+			</if>
+		</where>
+	</sql>
+		
+    <select id="selectListCount" resultType="long">
+        SELECT count(*) FROM forum 
+		<include refid="selectList_where"/>    
+    </select> 
+   
+    <select id="selectList" resultMap="ForumResultMap">
+    	SELECT <include refid="columns" />
+	    FROM forum 
+		<include refid="selectList_where"/>		
+    </select>
+
+</mapper>
+

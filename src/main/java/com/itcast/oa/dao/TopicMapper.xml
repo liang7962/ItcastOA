@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+
+<mapper namespace="com.itcast.oa.dao.TopicMapper">
+
+	<resultMap id="TopicResultMap" type="com.itcast.oa.entity.Topic">
+        <result property="type" column="type" jdbcType="VARCHAR"/>
+        <result property="replyCount" column="replyCount" jdbcType="INTEGER"/>
+        <result property="lastUpdateTime" column="lastUpdateTime" jdbcType="TIMESTAMP"/>
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">	   
+		type, replyCount, lastUpdateTime
+	</sql>
+
+	<insert id="insert" parameterType="com.itcast.oa.entity.Topic">
+        INSERT INTO topic (
+        ) VALUES (
+        )	
+	</insert>
+
+	<insert id="insertIfNotnull"   parameterType="com.itcast.oa.entity.Topic">
+        INSERT INTO topic 
+		<trim prefix="(" suffix=")" suffixOverrides="," >
+		</trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+		</trim>
+	</insert>
+    
+	<update id="update"  parameterType="com.itcast.oa.entity.Topic" >   
+        UPDATE topic SET
+	        type = #{type, jdbcType=VARCHAR} ,
+	        replyCount = #{replyCount, jdbcType=INTEGER} ,
+	        lastUpdateTime = #{lastUpdateTime, jdbcType=TIMESTAMP} 
+        WHERE 
+	</update>
+
+	<update id="updateIfNotnull"  parameterType="com.itcast.oa.entity.Topic">    
+        UPDATE topic 
+			<set>
+				<if test="type != null">
+					type = #{type, jdbcType=VARCHAR} ,
+				</if>
+				<if test="replyCount != null">
+					replyCount = #{replyCount, jdbcType=INTEGER} ,
+				</if>
+				<if test="lastUpdateTime != null">
+					lastUpdateTime = #{lastUpdateTime, jdbcType=TIMESTAMP} ,
+				</if>
+			</set>
+        WHERE 
+	</update>
+
+    <delete id="deleteById">  
+        DELETE FROM topic WHERE
+    </delete>
+    
+	
+	<sql id="selectList_where">
+		<where>	      				
+	       <if test="entity.type != null &amp;&amp; entity.type != ''">
+		 	   <choose>
+		 	   	  <when test="@Ognl@startWith(entity.type,'like')">
+		 	   	  	   AND type ${entity.type }
+		 	   	  </when>
+		 	   	  <otherwise>
+		 	   	  	   AND type = #{entity.type, jdbcType=VARCHAR}
+		 	   	  </otherwise>
+		 	   </choose>
+			</if>
+	       <if test="entity.replyCount != null &amp;&amp; entity.replyCount != ''">
+		 		 		AND replyCount = #{entity.replyCount, jdbcType=INTEGER}
+			</if>
+	       <if test="entity.lastUpdateTimeBegin != null &amp;&amp; entity.lastUpdateTimeBegin != ''">
+				AND lastUpdateTime >= #{entity.lastUpdateTimeBegin }
+		   </if>
+		   <if test="entity.lastUpdateTimeEnd != null &amp;&amp; entity.lastUpdateTimeEnd != ''">
+				AND lastUpdateTime &lt;= #{entity.lastUpdateTimeEnd }
+		   </if>
+		</where>
+	</sql>
+		
+    <select id="selectListCount" resultType="long">
+        SELECT count(*) FROM topic 
+		<include refid="selectList_where"/>    
+    </select> 
+   
+    <select id="selectList" resultMap="TopicResultMap">
+    	SELECT <include refid="columns" />
+	    FROM topic 
+		<include refid="selectList_where"/>		
+    </select>
+
+</mapper>
+

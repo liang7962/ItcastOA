@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+
+<mapper namespace="com.itcast.oa.dao.RoleMapper">
+
+	<resultMap id="RoleResultMap" type="com.itcast.oa.entity.Role">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">	   
+		id, name, description
+	</sql>
+
+	<insert id="insert" parameterType="com.itcast.oa.entity.Role">
+        INSERT INTO role (
+        	id ,
+        	name ,
+        	description 
+        ) VALUES (
+        	#{id, jdbcType=INTEGER} ,
+        	#{name, jdbcType=VARCHAR} ,
+        	#{description, jdbcType=VARCHAR} 
+        )	
+	</insert>
+
+	<insert id="insertIfNotnull"   parameterType="com.itcast.oa.entity.Role">
+        INSERT INTO role 
+		<trim prefix="(" suffix=")" suffixOverrides="," >
+			<if test="id != null">
+        		id ,
+			</if>
+			<if test="name != null">
+        		name ,
+			</if>
+			<if test="description != null">
+        		description ,
+			</if>
+		</trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+			<if test="id != null">
+        		#{id, jdbcType=INTEGER} ,
+			</if>
+			<if test="name != null">
+        		#{name, jdbcType=VARCHAR} ,
+			</if>
+			<if test="description != null">
+        		#{description, jdbcType=VARCHAR} ,
+			</if>
+		</trim>
+	</insert>
+    
+	<update id="update"  parameterType="com.itcast.oa.entity.Role" >   
+        UPDATE role SET
+	        name = #{name, jdbcType=VARCHAR} ,
+	        description = #{description, jdbcType=VARCHAR} 
+        WHERE 
+	        id = #{id, jdbcType=INTEGER} 
+	</update>
+
+	<update id="updateIfNotnull"  parameterType="com.itcast.oa.entity.Role">    
+        UPDATE role 
+			<set>
+				<if test="name != null">
+					name = #{name, jdbcType=VARCHAR} ,
+				</if>
+				<if test="description != null">
+					description = #{description, jdbcType=VARCHAR} ,
+				</if>
+			</set>
+        WHERE 
+	        id = #{id, jdbcType=INTEGER} 
+	</update>
+
+    <delete id="deleteById">  
+        DELETE FROM role WHERE
+        id = #{id } 
+    </delete>
+    
+		<select id="selectById" resultMap="RoleResultMap">
+			SELECT <include refid="columns" />		   
+			FROM role 
+			WHERE 
+			id = #{id, jdbcType=INTEGER} 
+		</select>
+	
+	<sql id="selectList_where">
+		<where>	      				
+	       <if test="entity.id != null &amp;&amp; entity.id != ''">
+		 		 		AND id = #{entity.id, jdbcType=INTEGER}
+			</if>
+	       <if test="entity.name != null &amp;&amp; entity.name != ''">
+		 	   <choose>
+		 	   	  <when test="@Ognl@startWith(entity.name,'like')">
+		 	   	  	   AND name ${entity.name }
+		 	   	  </when>
+		 	   	  <otherwise>
+		 	   	  	   AND name = #{entity.name, jdbcType=VARCHAR}
+		 	   	  </otherwise>
+		 	   </choose>
+			</if>
+	       <if test="entity.description != null &amp;&amp; entity.description != ''">
+		 	   <choose>
+		 	   	  <when test="@Ognl@startWith(entity.description,'like')">
+		 	   	  	   AND description ${entity.description }
+		 	   	  </when>
+		 	   	  <otherwise>
+		 	   	  	   AND description = #{entity.description, jdbcType=VARCHAR}
+		 	   	  </otherwise>
+		 	   </choose>
+			</if>
+		</where>
+	</sql>
+		
+    <select id="selectListCount" resultType="long">
+        SELECT count(*) FROM role 
+		<include refid="selectList_where"/>    
+    </select> 
+   
+    <select id="selectList" resultMap="RoleResultMap">
+    	SELECT <include refid="columns" />
+	    FROM role 
+		<include refid="selectList_where"/>		
+    </select>
+
+</mapper>
+

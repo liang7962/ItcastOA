@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+
+<mapper namespace="com.itcast.oa.dao.ArticleMapper">
+
+	<resultMap id="ArticleResultMap" type="com.itcast.oa.entity.Article">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="postTime" column="postTime" jdbcType="TIMESTAMP"/>
+        <result property="ipAdd" column="ipAdd" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">	   
+		id, title, content, postTime, ipAdd
+	</sql>
+
+	<insert id="insert" parameterType="com.itcast.oa.entity.Article">
+        INSERT INTO article (
+        	id ,
+        	title ,
+        	content ,
+        	postTime ,
+        	ipAdd 
+        ) VALUES (
+        	#{id, jdbcType=INTEGER} ,
+        	#{title, jdbcType=VARCHAR} ,
+        	#{content, jdbcType=VARCHAR} ,
+        	#{postTime, jdbcType=TIMESTAMP} ,
+        	#{ipAdd, jdbcType=VARCHAR} 
+        )	
+	</insert>
+
+	<insert id="insertIfNotnull"   parameterType="com.itcast.oa.entity.Article">
+        INSERT INTO article 
+		<trim prefix="(" suffix=")" suffixOverrides="," >
+			<if test="id != null">
+        		id ,
+			</if>
+			<if test="title != null">
+        		title ,
+			</if>
+			<if test="content != null">
+        		content ,
+			</if>
+			<if test="postTime != null">
+        		postTime ,
+			</if>
+			<if test="ipAdd != null">
+        		ipAdd ,
+			</if>
+		</trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+			<if test="id != null">
+        		#{id, jdbcType=INTEGER} ,
+			</if>
+			<if test="title != null">
+        		#{title, jdbcType=VARCHAR} ,
+			</if>
+			<if test="content != null">
+        		#{content, jdbcType=VARCHAR} ,
+			</if>
+			<if test="postTime != null">
+        		#{postTime, jdbcType=TIMESTAMP} ,
+			</if>
+			<if test="ipAdd != null">
+        		#{ipAdd, jdbcType=VARCHAR} ,
+			</if>
+		</trim>
+	</insert>
+    
+	<update id="update"  parameterType="com.itcast.oa.entity.Article" >   
+        UPDATE article SET
+	        title = #{title, jdbcType=VARCHAR} ,
+	        content = #{content, jdbcType=VARCHAR} ,
+	        postTime = #{postTime, jdbcType=TIMESTAMP} ,
+	        ipAdd = #{ipAdd, jdbcType=VARCHAR} 
+        WHERE 
+	        id = #{id, jdbcType=INTEGER} 
+	</update>
+
+	<update id="updateIfNotnull"  parameterType="com.itcast.oa.entity.Article">    
+        UPDATE article 
+			<set>
+				<if test="title != null">
+					title = #{title, jdbcType=VARCHAR} ,
+				</if>
+				<if test="content != null">
+					content = #{content, jdbcType=VARCHAR} ,
+				</if>
+				<if test="postTime != null">
+					postTime = #{postTime, jdbcType=TIMESTAMP} ,
+				</if>
+				<if test="ipAdd != null">
+					ipAdd = #{ipAdd, jdbcType=VARCHAR} ,
+				</if>
+			</set>
+        WHERE 
+	        id = #{id, jdbcType=INTEGER} 
+	</update>
+
+    <delete id="deleteById">  
+        DELETE FROM article WHERE
+        id = #{id } 
+    </delete>
+    
+		<select id="selectById" resultMap="ArticleResultMap">
+			SELECT <include refid="columns" />		   
+			FROM article 
+			WHERE 
+			id = #{id, jdbcType=INTEGER} 
+		</select>
+	
+	<sql id="selectList_where">
+		<where>	      				
+	       <if test="entity.id != null &amp;&amp; entity.id != ''">
+		 		 		AND id = #{entity.id, jdbcType=INTEGER}
+			</if>
+	       <if test="entity.title != null &amp;&amp; entity.title != ''">
+		 	   <choose>
+		 	   	  <when test="@Ognl@startWith(entity.title,'like')">
+		 	   	  	   AND title ${entity.title }
+		 	   	  </when>
+		 	   	  <otherwise>
+		 	   	  	   AND title = #{entity.title, jdbcType=VARCHAR}
+		 	   	  </otherwise>
+		 	   </choose>
+			</if>
+	       <if test="entity.content != null &amp;&amp; entity.content != ''">
+		 	   <choose>
+		 	   	  <when test="@Ognl@startWith(entity.content,'like')">
+		 	   	  	   AND content ${entity.content }
+		 	   	  </when>
+		 	   	  <otherwise>
+		 	   	  	   AND content = #{entity.content, jdbcType=VARCHAR}
+		 	   	  </otherwise>
+		 	   </choose>
+			</if>
+	       <if test="entity.postTimeBegin != null &amp;&amp; entity.postTimeBegin != ''">
+				AND postTime >= #{entity.postTimeBegin }
+		   </if>
+		   <if test="entity.postTimeEnd != null &amp;&amp; entity.postTimeEnd != ''">
+				AND postTime &lt;= #{entity.postTimeEnd }
+		   </if>
+	       <if test="entity.ipAdd != null &amp;&amp; entity.ipAdd != ''">
+		 	   <choose>
+		 	   	  <when test="@Ognl@startWith(entity.ipAdd,'like')">
+		 	   	  	   AND ipAdd ${entity.ipAdd }
+		 	   	  </when>
+		 	   	  <otherwise>
+		 	   	  	   AND ipAdd = #{entity.ipAdd, jdbcType=VARCHAR}
+		 	   	  </otherwise>
+		 	   </choose>
+			</if>
+		</where>
+	</sql>
+		
+    <select id="selectListCount" resultType="long">
+        SELECT count(*) FROM article 
+		<include refid="selectList_where"/>    
+    </select> 
+   
+    <select id="selectList" resultMap="ArticleResultMap">
+    	SELECT <include refid="columns" />
+	    FROM article 
+		<include refid="selectList_where"/>		
+    </select>
+
+</mapper>
+
